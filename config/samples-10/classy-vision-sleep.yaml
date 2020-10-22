@@ -1,0 +1,22 @@
+apiVersion: elastic.pytorch.org/v1alpha1
+kind: ElasticJob
+metadata:
+  name: classy-vision
+  namespace: elastic-job
+spec:
+  # Use "etcd-service:2379" if you already apply etcd.yaml
+  rdzvEndpoint: "etcd-service:2379"
+  minReplicas: 1
+  maxReplicas: 2
+  replicaSpecs:
+    Worker:
+      replicas: 2
+      restartPolicy: ExitCode
+      template:
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+            - name: elasticjob-worker
+              image: 10-20-101-1.caicloudprivatetest.com/release/torchelastic/examples:0.2.4
+              imagePullPolicy: Always

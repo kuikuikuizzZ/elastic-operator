@@ -1,0 +1,42 @@
+apiVersion: elastic.pytorch.org/v1alpha1
+kind: ElasticJob
+metadata:
+  name: imagenet2
+  namespace: elastic-job
+spec:
+  # Use "etcd-service:2379" if you already apply etcd.yaml
+  rdzvEndpoint: "etcd-service:2379"
+  minReplicas: 1
+  maxReplicas: 2
+  replicaSpecs:
+    Worker:
+      replicas: 2
+      restartPolicy: OnFailure
+      template:
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+            - name: elasticjob-worker-1
+              image:  10-20-101-1.caicloudprivatetest.com/release/torchelastic:v0.2.1
+              imagePullPolicy: Always
+              command:
+                - /bin/bash
+                - -c
+#                - sleep 24h;
+                - "python -m torchelastic.distributed.launch \
+                  --nproc_per_node=1 \
+                   main.py \
+                   --arch resnet18 \
+                   --epochs 4 \
+                   --batch-size 16 \
+                   --checkpoint-file ./checkpoint1/checkpoint.pth.tar \
+                   /tmp"
+              resources:
+                limits:
+                  cpu: 3000m
+                  memory: 4000Mi
+                  nvidia.com/gpu: 1
+                requests:
+                  cpu: 2000m
+                  memory: 3000Mi

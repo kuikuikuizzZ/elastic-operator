@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app: elastic-job-k8s-controller
+  name: elastic-job
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elastic-job-k8s-controller
+  namespace: kube-system
+  labels:
+    app: elastic-job-k8s-controller
+spec:
+  selector:
+    matchLabels:
+      app: elastic-job-k8s-controller
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: elastic-job-k8s-controller
+    spec:
+      containers:
+      - command:
+        - /elastic-controller
+        args:
+        - --enable-leader-election
+        image: 10-20-101-1.caicloudprivatetest.com/release/elastic-controller:v0.2.0-67-g57ef11d-dirty
+        name: manager
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+      terminationGracePeriodSeconds: 10
