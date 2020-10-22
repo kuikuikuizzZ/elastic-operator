@@ -1,5 +1,5 @@
 domain: pytorch.org
-repo: github.com/pytorch/elastic/kubernetes
+repo: github.com/kuikuikuizzZ/elastic-operator
 resources:
 - group: elastic
   kind: ElasticJob
